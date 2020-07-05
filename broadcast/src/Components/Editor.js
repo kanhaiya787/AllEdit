@@ -1,53 +1,85 @@
 import React, {Component, Link} from 'react';
 import socketIOClient from "socket.io-client";
+import History from "./History";
+import Axios from 'axios';
 
  class Editor extends React.Component{
 
+
     constructor(){
         super();
+
         this.state = {
+          text:"",
           endpoint: "http://localhost:4001",
-          text:""
-        };
+          showHistory:false,
+          history:""
+        }
+        this.socket =  socketIOClient(this.state.endpoint);
+
       }
     
       send = (vall) => {
-        console.log(15,"send methl");
-        const socket = socketIOClient(this.state.endpoint);
-        socket.emit('send changes', vall) 
-
+          this.socket.emit('send changes', vall);
       }
 
+
+
       componentDidMount(){
-     
-        console.log(30,this.state.text);
-        setInterval(() => {
-         this.send(localStorage.getItem("editText")) 
-        },5000);
-        
-        const socket = socketIOClient(this.state.endpoint);
-        socket.on('send changes', (text) => {
+              
+        this.socket.on('send changes', (texts) => {
           this.setState({
-            text:text
+            text:texts
           })
         });
       }
     
       changeText = (event) => {
-        localStorage.setItem("editText",event.target.value);
+        this.setState({
+          text:event.target.value
+        },() =>  {this.send(this.state.text)}
+      );
       }
+
+    showHistory = (e) => {
+      Axios.get('http://localhost:4001/get/room1').then((res ) => {
+         this.setState({
+           history:res.data
+         })
+      }).catch(err => {
+
+      });
+      this.setState({
+        showHistory:!this.state.showHistory
+      })
+
+      e.preventDefault();
+		  e.stopPropagation();
+    }
+
+    saveData = (e)=>{
+
+      console.log(this);
+      this.socket.emit('save data', this.state.text);
+      e.preventDefault();
+		  e.stopPropagation();
+    }
+    
     
     render(){
 
-      //let text=this.state.text;
-      //console.log(26,text);
+      let text=this.state.text;
       
         return(
-
+            <div>
             <form>              
-                <textarea rows="30" cols="100" onChange={this.changeText} value={this.state.text}></textarea> 
-                <button>History</button>
+                <textarea rows="30" cols="100" onChange={this.changeText} value={text}
+                   ></textarea> 
+                <button onClick = {this.showHistory}>History</button>
+                <button onClick = {this.saveData}>Save</button>
             </form>
+            {this.state.showHistory ? <History data={this.state.history}/> : null}
+            </div>
         )
     }
 
