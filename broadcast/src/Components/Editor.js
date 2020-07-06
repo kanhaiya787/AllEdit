@@ -13,14 +13,17 @@ import Axios from 'axios';
           text:"",
           endpoint: "http://localhost:4001",
           showHistory:false,
-          history:""
+          history:"",
+            username:this.props.name,
+            roomname:this.props.room,
+            userList:[]
         }
-        this.socket =  socketIOClient(this.state.endpoint);
+        this.socket =  socketIOClient(this.state.endpoint,{ query: "roomname="+this.state.roomname+"&username="+this.state.username });
 
       }
     
       send = (vall) => {
-          this.socket.emit('send changes', vall);
+          this.socket.emit('send changes', {"roomname":this.state.roomname,"data":vall});
       }
 
 
@@ -29,9 +32,15 @@ import Axios from 'axios';
               
         this.socket.on('send changes', (texts) => {
           this.setState({
-            text:texts
+            text:texts.data
           })
         });
+          this.socket.on('send users', (texts) => {
+              console.log(39,"received users on editor "+texts)
+              this.setState({
+                  userList:texts
+              })
+          });
       }
     
       changeText = (event) => {
@@ -60,21 +69,32 @@ import Axios from 'axios';
     saveData = (e)=>{
 
       console.log(this);
-      this.socket.emit('save data', this.state.text);
+      this.socket.emit('save data', {"roomname":this.state.roomname,"data":this.state.text});
       e.preventDefault();
 		  e.stopPropagation();
     }
     
-    
+    createuserlist=()=>{
+        let table=[];
+        console.log(79,this.state.userList)
+            for (let i = 0; i < this.state.userList.length; i++) {
+                let children = [];
+                children.push(<li>{this.state.userList[i]}</li>);
+                table.push(<ul>{children}</ul>);
+            }
+
+            return table;
+    }
     render(){
 
       let text=this.state.text;
       
         return(
             <div>
-            <form>              
-                <textarea rows="30" cols="100" onChange={this.changeText} value={text}
-                   ></textarea> 
+            <form>
+                <h1>Users:</h1>
+                    {this.createuserlist()}
+                <textarea rows="30" cols="100" onChange={this.changeText} value={text}/>
                 <button onClick = {this.showHistory}>History</button>
                 <button onClick = {this.saveData}>Save</button>
             </form>
