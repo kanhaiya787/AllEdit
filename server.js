@@ -29,7 +29,7 @@ io.on('connection', socket => {
     fs.open("data/"+socket.handshake.query.roomname+".txt", ()=>console.log("file create error"));
   }
   userlist = data[0].users;
-  if(!userlist.find((user)=>{return user===socket.handshake.query.username})){
+  if(!userlist.includes(socket.handshake.query.username)){
     userlist.push(socket.handshake.query.username)
   }
   data[0].users=userlist

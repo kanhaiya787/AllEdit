@@ -2,6 +2,7 @@ import React, {Component, Link} from 'react';
 import socketIOClient from "socket.io-client";
 import History from "./History";
 import Axios from 'axios';
+import '../App.css';
 
  class Editor extends React.Component{
 
@@ -14,8 +15,8 @@ import Axios from 'axios';
           endpoint: "http://localhost:4001",
           showHistory:false,
           history:"",
-            username:this.props.name,
-            roomname:this.props.room,
+            username:sessionStorage.getItem("name"),
+            roomname:sessionStorage.getItem("room"),
             userList:[]
         }
         this.socket =  socketIOClient(this.state.endpoint,{ query: "roomname="+this.state.roomname+"&username="+this.state.username });
@@ -90,16 +91,16 @@ import Axios from 'axios';
       let text=this.state.text;
       let name = this.props.name;
       let room = this.props.room;
-      console.log(74,name,room)
       
         return(
             <div>
             <form>
                 <h1>Users:</h1>
                     {this.createuserlist()}
-                <textarea rows="30" cols="100" onChange={this.changeText} value={text}/>
-                <button onClick = {this.showHistory}>History</button>
-                <button onClick = {this.saveData}>Save</button>
+                <textarea className="textarea" rows="30" cols="100" onChange={this.changeText} value={text}/>
+                <br/><br/>
+                <button className="button1" onClick = {this.showHistory}>History</button>
+                <button className="button1" onClick = {this.saveData}>Save</button>
             </form>
             {this.state.showHistory ? <History data={this.state.history}/> : null}
             </div>

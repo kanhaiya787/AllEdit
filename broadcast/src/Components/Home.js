@@ -14,8 +14,8 @@ import '../App.css'
     }
 
     submit =() => {
-      let name = this.state.name!= undefined ? this.state.name : "";
-      let room=this.state.room!= undefined ? this.state.room : "";
+      let name = sessionStorage.getItem("name");
+      let room=sessionStorage.getItem("room");
       console.log(16,name,room);
 
       if(room!="" && name!=""){
@@ -33,14 +33,10 @@ import '../App.css'
     }
 
     handleName =(e) => {
-        this.setState({
-            name:e.target.value
-        })
+        sessionStorage.setItem("name",e.target.value);
     }
     handleRoom =(e) => {
-        this.setState({
-            room:e.target.value
-        })
+        sessionStorage.setItem("room",e.target.value);
     }
 
     render(){
