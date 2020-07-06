@@ -31,7 +31,7 @@ io.on('connection', socket => {
   }
   data[0].users=userlist
   fs.writeFileSync("data/"+socket.handshake.query.roomname+".txt",JSON.stringify(data),(err)=>console.log(err))
-  io.sockets.emit('send users', userlist);
+  io.sockets.emit('send users', {"room":socket.handshake.query.roomname,"users":userlist});
   
   socket.on('disconnect', () => {
     console.log('User disconnected username='+socket.handshake.query.username+" room="+socket.handshake.query.roomname)
@@ -61,7 +61,7 @@ io.on('connection', socket => {
   })
 
   socket.on('send changes', (text) => {
-    io.sockets.emit('send changes', text)
+    io.sockets.emit('send changes',{"room":text.roomname,"data":text.data})
   })
 })
 
