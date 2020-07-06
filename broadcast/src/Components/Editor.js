@@ -6,8 +6,8 @@ import Axios from 'axios';
  class Editor extends React.Component{
 
 
-    constructor(){
-        super();
+    constructor(props){
+        super(props);
 
         this.state = {
           text:"",
@@ -69,6 +69,9 @@ import Axios from 'axios';
     render(){
 
       let text=this.state.text;
+      let name = this.props.name;
+      let room = this.props.room;
+      console.log(74,name,room)
       
         return(
             <div>

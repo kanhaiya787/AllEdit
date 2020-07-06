@@ -23,15 +23,16 @@ import React, {Component, Link} from 'react';
 
     render(){
         let data = this.props.data;
-        console.log(24,data);
+        //console.log(24,data);
         return(
+            <div>
             <table border="1">
             <tr>
             <th>Time</th><th>Data</th>
             </tr>
             {this.createTable(data)}
-        </table>
-           
+            </table>
+            </div>
         )
     }
 
