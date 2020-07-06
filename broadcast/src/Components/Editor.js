@@ -32,15 +32,19 @@ import '../App.css';
       componentDidMount(){
               
         this.socket.on('send changes', (texts) => {
-          this.setState({
-            text:texts.data
-          })
+            if(texts.room===this.state.roomname) {
+                this.setState({
+                    text: texts.data
+                })
+            }
         });
           this.socket.on('send users', (texts) => {
-              console.log(39,"received users on editor "+texts)
-              this.setState({
-                  userList:texts
-              })
+              if(texts.room===this.state.roomname){
+                  console.log(39,"received users on editor "+texts)
+                  this.setState({
+                      userList:texts.users
+                  })
+              }
           });
       }
     
@@ -52,7 +56,7 @@ import '../App.css';
       }
 
     showHistory = (e) => {
-      Axios.get('http://localhost:4001/get/room1').then((res ) => {
+      Axios.get('http://localhost:4001/get/'+this.state.roomname).then((res ) => {
          this.setState({
            history:res.data
          })
