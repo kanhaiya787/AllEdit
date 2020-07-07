@@ -40,7 +40,6 @@ import '../App.css';
         });
           this.socket.on('send users', (texts) => {
               if(texts.room===this.state.roomname){
-                  console.log(39,"received users on editor "+texts)
                   this.setState({
                       userList:texts.users
                   })
